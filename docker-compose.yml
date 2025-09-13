@@ -1,0 +1,53 @@
+services:
+  bravo-be:
+    build:
+      context: ./docker/be
+      dockerfile: Dockerfile
+    container_name: bravo-be
+    volumes:
+      - ./:/var/www/bravo_app
+      - assets-volume-be:/var/www/bravo_app/backend/web/assets
+      - assets-volume-fe:/var/www/bravo_app/frontend/web/assets
+    working_dir: /var/www/bravo_app
+    networks:
+      - bravonet
+
+  bravo-nginx:
+    image: nginx:latest
+    container_name: bravo-nginx
+    ports:
+      - "8083:80"
+    volumes:
+      - ./:/var/www/bravo_app
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - assets-volume-be:/var/www/bravo_app/backend/web/assets
+      - assets-volume-fe:/var/www/bravo_app/frontend/web/assets
+    depends_on:
+      - bravo-be
+    networks:
+      - bravonet
+
+  bravo-mysql:
+    image: mysql:8.0
+    container_name: bravo-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: bravodb
+      MYSQL_USER: bravo
+      MYSQL_PASSWORD: bravopass
+    ports:
+      - "3308:3306"
+    volumes:
+      - bravo-db-data:/var/lib/mysql
+    networks:
+      - bravonet
+volumes:
+  bravo-db-data:
+  assets-volume-be:
+  assets-volume-fe:
+
+networks:
+  bravonet:
+    driver: bridge
+    
