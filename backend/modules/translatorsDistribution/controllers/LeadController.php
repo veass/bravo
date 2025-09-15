@@ -33,9 +33,9 @@ class LeadController extends DefaultController
         }, $result);
 
     }   
+
     public function actionSetTranslatorToLead()
     {
-
         $data = json_decode(\Yii::$app->request->getRawBody(), true);
 
         $leadId = $data['leadId'] ?? null;

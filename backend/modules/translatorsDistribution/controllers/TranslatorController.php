@@ -13,7 +13,6 @@ use yii\web\Response;
  */
 class TranslatorController extends DefaultController
 {
-
     public function behaviors()
     {
         return array_merge(parent::behaviors(), [
